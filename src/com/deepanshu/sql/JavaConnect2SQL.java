@@ -1,5 +1,6 @@
 package com.deepanshu.sql;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -46,19 +47,58 @@ public class JavaConnect2SQL {
 			
 			
 			/*fetch results from database and iterate results*/
-			String fetch = "SELECT * FROM student_details";
-			Statement st= con.createStatement();
-			ResultSet  result=  st.executeQuery(fetch);
+			/*
+			 * String fetch = "SELECT * FROM student_details"; Statement st=
+			 * con.createStatement(); ResultSet result= st.executeQuery(fetch);
+			 */
 			
-			int count=0;
-			while(result.next()) {
-				count++;
-				String name= result.getString("name");
-				int mark= result.getInt("mark");
-				System.out.printf("Student details %d %s - %d\n",count,name,mark);
-			}
+			/*
+			 * int count=0; while(result.next()) { count++; String name=
+			 * result.getString("name"); int mark= result.getInt("mark");
+			 * System.out.printf("Student details %d %s - %d\n",count,name,mark); }
+			 */
 			
 			
+			/*Calling Strore Procedure with Select Query, In parameter, Out Parameter
+			 * INOUT Parameter
+			 * */
+			//CallableStatement callstmt=null;
+			//callstmt=con.prepareCall("{call GetAllStudentDetails}");
+			 
+			/*
+			 * int count=0; if(callstmt.execute()) { ResultSet result=
+			 * callstmt.getResultSet(); count++; while(result.next()) { String name=
+			 * result.getString("name"); int mark= result.getInt("mark");
+			 * 
+			 * System.out.printf("Student details %d %s - %d\n",count,name,mark); } }
+			 */
+			
+			/*
+			 * Store procedure call with IN parameter
+			 * */
+			/*
+			 * CallableStatement callstmt1=null;
+			 * callstmt1=con.prepareCall("{call sp_GetSpecificStudentDetail(?)}");
+			 * callstmt1.setString(1, "DEEPANSHU"); int count1=0; if(callstmt1.execute()) {
+			 * ResultSet result= callstmt1.getResultSet(); count1++; while(result.next()) {
+			 * String name= result.getString("name"); int mark= result.getInt("mark");
+			 * 
+			 * System.out.printf("Specific Student details %d %s - %d\n",count,name,mark); }
+			 * }
+			 */
+			
+			
+			/*
+			 * Below one is IN and OUTPUT parameter store procedure in SQL Server 
+			 * called via java
+			 * */
+			CallableStatement callstmt2=null;
+			callstmt2=con.prepareCall("{call sp_GetSpecificStudentDetail(?,?)}");
+			callstmt2.setString(1, "MOHAN");
+			callstmt2.registerOutParameter(2, java.sql.Types.INTEGER);
+			callstmt2.execute();
+			int mark= callstmt2.getInt(2);
+			System.out.printf("Specific Student marks are %d",mark);
 			con.close();
 			
 		} catch (SQLException e) {
